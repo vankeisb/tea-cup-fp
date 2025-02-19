@@ -24,7 +24,7 @@
  */
 
 import { just, map2, Maybe, nothing } from './Maybe';
-import { expect, test, assert } from "vitest";
+import { expect, test, assert } from 'vitest';
 
 test('just with default', () => {
   expect(just(1).withDefault(2)).toBe(1);
