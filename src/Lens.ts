@@ -176,9 +176,8 @@ export function subPrism<A, B extends A>(f: (a: A) => Maybe<B>): Prism<A, B> {
 }
 
 export function orElse<A, B>(p1: Prism<A, B>, p2: Prism<A, B>): Prism<A, B> {
-    return new Prism<A, B>(
-      (a) => p1.get(a).orElseSupply(() => p2.get(a)),
-      (a, b) => (p1.get(a).isJust() ? p1.set(a, b) : p2.set(a, b)),
-    );
+  return new Prism<A, B>(
+    (a) => p1.get(a).orElseSupply(() => p2.get(a)),
+    (a, b) => (p1.get(a).isJust() ? p1.set(a, b) : p2.set(a, b)),
+  );
 }
-  
