@@ -24,7 +24,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import { discriminate, idLens, SubTypeGuard } from './Lens';
+import { discriminate, idLens, orElse, SubTypeGuard } from './Lens';
 import { just, Maybe, nothing } from './Maybe';
 
 describe('lens', () => {
