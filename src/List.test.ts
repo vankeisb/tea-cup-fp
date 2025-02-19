@@ -25,7 +25,7 @@
 
 import { List } from './List';
 import { just, Maybe, nothing } from './Maybe';
-import { expect, test } from "vitest";
+import { expect, test } from 'vitest';
 
 test('immutable from array', () => {
   const a = ['foo', 'bar', 'baz'];

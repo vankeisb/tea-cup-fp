@@ -24,7 +24,7 @@
  */
 
 import { Either, left, right } from './Either';
-import { expect, test } from "vitest";
+import { expect, test } from 'vitest';
 
 test('left', () => {
   const e: Either<string, number> = left('yeah');

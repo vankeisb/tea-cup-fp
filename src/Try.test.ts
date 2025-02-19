@@ -24,7 +24,7 @@
  */
 
 import { Try } from './Try';
-import { expect, test } from "vitest";
+import { expect, test } from 'vitest';
 
 test('try without exception', () => {
   expect(Try(() => 'yalla').withDefault('neh')).toBe('yalla');

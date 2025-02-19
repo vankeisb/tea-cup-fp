@@ -28,10 +28,10 @@ import { err, ok, Result } from './Result';
 import { just, nothing } from './Maybe';
 const num = Decode.num;
 const field = Decode.field;
-import { describe, expect, test } from "vitest";
+import { describe, expect, test } from 'vitest';
 
 test('syntax error', () => {
-  expect(num.decodeString(' { broken ')).toEqual(err('Expected property name or \'}\' in JSON at position 3'));
+  expect(num.decodeString(' { broken ')).toEqual(err("Expected property name or '}' in JSON at position 3"));
 });
 
 test('primitives', () => {
