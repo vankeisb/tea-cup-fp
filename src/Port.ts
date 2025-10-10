@@ -28,8 +28,8 @@ import { Sub } from './Sub';
 export class Port<T> {
   private subs: PortSub<T, any>[] = [];
 
-  send(t: T): void {
-    this.subs.forEach((s) => s.notify(t));
+  send(t: T, flushSync: boolean = true): void {
+    this.subs.forEach((s) => s.notify(t, flushSync));
   }
 
   subscribe<M>(f: (t: T) => M): Sub<M> {
@@ -60,7 +60,7 @@ class PortSub<T, M> extends Sub<M> {
     this._onRelease(this);
   }
 
-  notify(t: T): void {
-    this.dispatch(this.f(t));
+  notify(t: T, flushSync: boolean = true): void {
+    this.dispatch(this.f(t), flushSync);
   }
 }

@@ -65,7 +65,7 @@ export abstract class Cmd<Msg> {
  */
 // exported for perf optimisation reasons
 export class CmdNone<Msg> extends Cmd<Msg> {
-  execute(dispatch: Dispatcher<Msg>): void {
+  execute(): void {
     // it's a noop !
   }
 }
@@ -90,8 +90,8 @@ class CmdMapped<Msg, ParentMsg> extends Cmd<ParentMsg> {
   }
 
   execute(dispatch: Dispatcher<ParentMsg>): void {
-    this.command.execute((m: Msg) => {
-      dispatch(this.mapper(m));
+    this.command.execute((m: Msg, f?: boolean) => {
+      dispatch(this.mapper(m), f);
     });
   }
 }
