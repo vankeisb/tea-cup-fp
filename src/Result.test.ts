@@ -25,7 +25,7 @@
 
 import { ok, err } from './Result';
 import { just, nothing } from './Maybe';
-import { expect, test } from "vitest";
+import { expect, test } from 'vitest';
 
 test('ok map', () => {
   expect(ok(1).map((v) => v + 1)).toEqual(ok(2));

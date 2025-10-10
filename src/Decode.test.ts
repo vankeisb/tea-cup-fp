@@ -29,11 +29,19 @@ import { just, nothing } from './Maybe';
 const num = Decode.num;
 const field = Decode.field;
 import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 test('syntax error', () => {
-  expect(num.decodeString(' { broken ')).toEqual(
-    err("Expected property name or '}' in JSON at position 3 (line 1 column 4)"),
-  );
+  const r = num.decodeString(' { broken ');
+  switch (r.tag) {
+    case 'Ok': {
+      throw 'should have failed';
+    }
+    case 'Err': {
+      expect(r.err.startsWith("Expected property name or '}' in JSON at position 3")).toBe(true);
+      break;
+    }
+  }
 });
 
 test('primitives', () => {

@@ -23,7 +23,7 @@
  *
  */
 
-import { just, Maybe, nothing } from "./Maybe";
+import { just, Maybe, nothing } from './Maybe';
 
 type MaybeOf<M> = M extends Maybe<infer A> ? A : never;
 
@@ -48,10 +48,7 @@ export class Lens<A, B> {
   }
 
   flatten(): Prism<A, MaybeOf<B>> {
-    return composeLensPrism(
-      this as unknown as Lens<A, Maybe<MaybeOf<B>>>,
-      flattenPrism<B>()
-    );
+    return composeLensPrism((this as unknown) as Lens<A, Maybe<MaybeOf<B>>>, flattenPrism<B>());
   }
 
   andThenLens<C>(lens: Lens<B, C>): Lens<A, C> {
@@ -64,10 +61,7 @@ export class Lens<A, B> {
 }
 
 export class Prism<A, B> {
-  constructor(
-    readonly get: (a: A) => Maybe<B>,
-    readonly set: (a: A, b: B) => A
-  ) {}
+  constructor(readonly get: (a: A) => Maybe<B>, readonly set: (a: A, b: B) => A) {}
 
   update(a: A, f: (b: B) => B): Maybe<A> {
     return this.get(a)
@@ -98,10 +92,7 @@ export class Prism<A, B> {
   }
 
   flatten(): Prism<A, MaybeOf<B>> {
-    return composePrisms(
-      this as unknown as Prism<A, Maybe<MaybeOf<B>>>,
-      flattenPrism()
-    );
+    return composePrisms((this as unknown) as Prism<A, Maybe<MaybeOf<B>>>, flattenPrism());
   }
 }
 
@@ -110,34 +101,25 @@ export type SubTypeGuard<A, B extends A> = (a: A) => Maybe<B>;
 export function idLens<A>(): Lens<A, A> {
   return new Lens(
     (a) => a,
-    (_, v) => v
+    (_, v) => v,
   );
 }
 
-export function composeLenses<A, B, C>(
-  l1: Lens<A, B>,
-  l2: Lens<B, C>
-): Lens<A, C> {
+export function composeLenses<A, B, C>(l1: Lens<A, B>, l2: Lens<B, C>): Lens<A, C> {
   return new Lens(
     (a) => l2.get(l1.get(a)),
-    (a, v) => l1.set(a, l2.set(l1.get(a), v))
+    (a, v) => l1.set(a, l2.set(l1.get(a), v)),
   );
 }
 
-export function composeLensPrism<A, B, C>(
-  l: Lens<A, B>,
-  p: Prism<B, C>
-): Prism<A, C> {
+export function composeLensPrism<A, B, C>(l: Lens<A, B>, p: Prism<B, C>): Prism<A, C> {
   return new Prism(
     (a) => p.get(l.get(a)),
-    (a, v) => l.set(a, p.set(l.get(a), v))
+    (a, v) => l.set(a, p.set(l.get(a), v)),
   );
 }
 
-export function composePrismLens<A, B, C>(
-  p: Prism<A, B>,
-  l: Lens<B, C>
-): Prism<A, C> {
+export function composePrismLens<A, B, C>(p: Prism<A, B>, l: Lens<B, C>): Prism<A, C> {
   return new Prism(
     (a) => p.get(a).map(l.get),
     (a, v) =>
@@ -145,14 +127,11 @@ export function composePrismLens<A, B, C>(
         .get(a)
         .map((b) => l.set(b, v))
         .map((bc) => p.set(a, bc))
-        .withDefault(a)
+        .withDefault(a),
   );
 }
 
-export function composePrisms<A, B, C>(
-  p: Prism<A, B>,
-  p2: Prism<B, C>
-): Prism<A, C> {
+export function composePrisms<A, B, C>(p: Prism<A, B>, p2: Prism<B, C>): Prism<A, C> {
   return new Prism(
     (a) => p.get(a).andThen(p2.get),
     (a, v) =>
@@ -160,7 +139,7 @@ export function composePrisms<A, B, C>(
         .get(a)
         .map((b) => p2.set(b, v))
         .map((bc) => p.set(a, bc))
-        .withDefault(a)
+        .withDefault(a),
   );
 }
 
@@ -171,21 +150,18 @@ export function fieldLens<A, K extends keyof A>(field: K): Lens<A, A[K]> {
       const a1 = { ...a };
       a1[field] = v;
       return a1;
-    }
+    },
   );
 }
 
 export function flattenPrism<A>(): Prism<Maybe<MaybeOf<A>>, MaybeOf<A>> {
   return new Prism(
     (a) => a,
-    (a, v) => a.map(() => v).orElse(a)
+    (a, v) => a.map(() => v).orElse(a),
   );
 }
 
-export function discriminate<B, C extends B, K extends keyof B>(
-  tag: K,
-  v: C[K]
-): SubTypeGuard<B, C> {
+export function discriminate<B, C extends B, K extends keyof B>(tag: K, v: C[K]): SubTypeGuard<B, C> {
   return (o) => (o[tag] === v ? just(o as C) : nothing);
 }
 
@@ -195,6 +171,6 @@ export function subPrism<A, B extends A>(f: (a: A) => Maybe<B>): Prism<A, B> {
     (a, v) =>
       f(a)
         .map<A>(() => v)
-        .withDefault(a)
+        .withDefault(a),
   );
 }

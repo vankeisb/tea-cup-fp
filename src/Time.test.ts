@@ -25,25 +25,27 @@
 
 import { Time } from './Time';
 import { perform } from './Task.test';
-import { expect, test } from "vitest";
+import { expect, test } from 'vitest';
 
 const margin = 10;
 
-test('now', () => new Promise<void>(done => {
-  const now = new Date().getTime();
-  perform(Time.now(), (r) => {
-    expect(r - now).toBeLessThan(margin);
-    done();
-  });
-}));
+test('now', () =>
+  new Promise<void>((done) => {
+    const now = new Date().getTime();
+    perform(Time.now(), (r) => {
+      expect(r - now).toBeLessThan(margin);
+      done();
+    });
+  }));
 
-test('in', () => new Promise<void>(done => {
-  const now = new Date().getTime();
-  const timeout = 500;
-  perform(Time.in(timeout), (r) => {
-    const elapsed = r - now;
-    expect(elapsed).toBeLessThan(timeout + margin);
-    expect(elapsed).toBeGreaterThanOrEqual(timeout);
-    done();
-  });
-}));
+test('in', () =>
+  new Promise<void>((done) => {
+    const now = new Date().getTime();
+    const timeout = 500;
+    perform(Time.in(timeout), (r) => {
+      const elapsed = r - now;
+      expect(elapsed).toBeLessThan(timeout + margin);
+      expect(elapsed).toBeGreaterThanOrEqual(timeout);
+      done();
+    });
+  }));
