@@ -52,7 +52,7 @@ class EverySub<M> extends Sub<M> {
   private readonly delay: number;
   private readonly toMsg: () => M;
 
-  constructor(delay: number, toMsg: () => M) {
+  constructor(delay: number, toMsg: () => M, readonly flushSync: boolean) {
     super();
     this.delay = delay;
     this.toMsg = toMsg;
@@ -82,7 +82,7 @@ class EverySub<M> extends Sub<M> {
   }
 
   trigger() {
-    this.dispatch(this.toMsg());
+    this.dispatch(this.toMsg(), this.flushSync);
   }
 }
 
@@ -104,8 +104,8 @@ export class Time {
     return new InTask(timeout);
   }
 
-  static every<M>(delay: number, toMsg: () => M): Sub<M> {
-    return new EverySub(delay, toMsg);
+  static every<M>(delay: number, toMsg: () => M, flushSync: boolean = true): Sub<M> {
+    return new EverySub(delay, toMsg, flushSync);
   }
 }
 

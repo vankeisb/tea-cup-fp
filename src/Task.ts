@@ -44,8 +44,8 @@ export abstract class Task<E, R> {
    * @param t the task
    * @param toMsg a function that turns the result of the task into a Msg
    */
-  static attempt<E, R, M>(t: Task<E, R>, toMsg: (r: Result<E, R>) => M): Cmd<M> {
-    return new TaskCmd(t, toMsg);
+  static attempt<E, R, M>(t: Task<E, R>, toMsg: (r: Result<E, R>) => M, flushSync: boolean = true): Cmd<M> {
+    return new TaskCmd(t, toMsg, flushSync);
   }
 
   /**
@@ -53,8 +53,8 @@ export abstract class Task<E, R> {
    * @param t the task
    * @param toMsg a function that turns the result of the task into a Msg
    */
-  static perform<R, M>(t: Task<never, R>, toMsg: (r: R) => M): Cmd<M> {
-    return new TaskNoErrCmd(t, toMsg);
+  static perform<R, M>(t: Task<never, R>, toMsg: (r: R) => M, flushSync: boolean = true): Cmd<M> {
+    return new TaskNoErrCmd(t, toMsg, flushSync);
   }
 
   /**
@@ -328,7 +328,7 @@ class TaskCmd<E, R, M> extends Cmd<M> {
   readonly task: Task<E, R>;
   readonly toMsg: (r: Result<E, R>) => M;
 
-  constructor(task: Task<E, R>, toMsg: (r: Result<E, R>) => M) {
+  constructor(task: Task<E, R>, toMsg: (r: Result<E, R>) => M, readonly flushSync: boolean) {
     super();
     this.task = task;
     this.toMsg = toMsg;
@@ -336,7 +336,7 @@ class TaskCmd<E, R, M> extends Cmd<M> {
 
   execute(dispatch: Dispatcher<M>): void {
     this.task.execute((r: Result<E, R>) => {
-      dispatch(this.toMsg(r));
+      dispatch(this.toMsg(r), this.flushSync);
     });
   }
 }
@@ -345,7 +345,7 @@ class TaskNoErrCmd<R, M> extends Cmd<M> {
   readonly task: Task<void, R>;
   readonly toMsg: (r: R) => M;
 
-  constructor(task: Task<void, R>, toMsg: (r: R) => M) {
+  constructor(task: Task<void, R>, toMsg: (r: R) => M, readonly flushSync: boolean) {
     super();
     this.task = task;
     this.toMsg = toMsg;
@@ -354,7 +354,7 @@ class TaskNoErrCmd<R, M> extends Cmd<M> {
   execute(dispatch: Dispatcher<M>): void {
     this.task.execute((r: Result<void, R>) => {
       r.match(
-        (ok: R) => dispatch(this.toMsg(ok)),
+        (ok: R) => dispatch(this.toMsg(ok), this.flushSync),
         (err: any) => {
           throw Error('got an error from a void task : ' + r + ', ' + err);
         },

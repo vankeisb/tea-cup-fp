@@ -26,7 +26,7 @@
 /**
  * Dispatcher for Msgs.
  */
-export type Dispatcher<Msg> = (m: Msg) => void;
+export type Dispatcher<Msg> = (m: Msg, flushSync?: boolean) => void;
 
 /**
  * Map a dispatcher's Msg type, useful mostly for parent-child.
@@ -34,7 +34,7 @@ export type Dispatcher<Msg> = (m: Msg) => void;
  * @param mapper the mapping function
  */
 export function map<P, C>(d: Dispatcher<P>, mapper: (c: C) => P): Dispatcher<C> {
-  return (c: C) => {
-    d(mapper(c));
+  return (c: C, f?: boolean) => {
+    d(mapper(c), f);
   };
 }
