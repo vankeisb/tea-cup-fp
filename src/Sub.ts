@@ -52,8 +52,8 @@ export abstract class Sub<Msg> {
     return this.active;
   }
 
-  protected dispatch(m: Msg): void {
-    this.dispatcher?.(m);
+  protected dispatch(m: Msg, flushSync: boolean = true): void {
+    this.dispatcher?.(m, flushSync);
   }
 
   protected onInit() {}
@@ -95,8 +95,8 @@ class MappedSub<Msg, ParentMsg> extends Sub<ParentMsg> {
   }
 
   init(dispatch: Dispatcher<ParentMsg>): void {
-    this.childSub.init((m: Msg) => {
-      dispatch(this.mapper(m));
+    this.childSub.init((m: Msg, flushSync?: boolean) => {
+      dispatch(this.mapper(m), flushSync);
     });
   }
 

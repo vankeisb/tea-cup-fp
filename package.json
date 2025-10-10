@@ -1,6 +1,6 @@
 {
   "name": "tea-cup-fp",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "react-tea-cup FP utils (Maybe, Result, Task etc)",
   "author": "Rémi Van Keisbelck <remi@rvkb.com>",
   "license": "MIT",

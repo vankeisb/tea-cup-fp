@@ -10,12 +10,12 @@
         "strict": true,
         "inlineSourceMap": true,
         "inlineSources": true,
-        "esModuleInterop": false,
-        "moduleResolution": "bundler"
+        "esModuleInterop": false
     },
     "compileOnSave": true,
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "**/*.test.ts"
     ]
 }

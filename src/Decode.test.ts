@@ -29,6 +29,7 @@ import { just, nothing } from './Maybe';
 const num = Decode.num;
 const field = Decode.field;
 import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 test('syntax error', () => {
   const r = num.decodeString(' { broken ');

@@ -28,7 +28,7 @@ import { Sub } from './Sub';
 class RafSub<M> extends Sub<M> {
   readonly mapper: (t: number) => M;
 
-  constructor(mapper: (t: number) => M) {
+  constructor(mapper: (t: number) => M, readonly flushSync: boolean) {
     super();
     this.mapper = mapper;
   }
@@ -41,10 +41,10 @@ class RafSub<M> extends Sub<M> {
   }
 
   trigger(t: number) {
-    this.dispatch(this.mapper(t));
+    this.dispatch(this.mapper(t), this.flushSync);
   }
 }
 
-export function onAnimationFrame<M>(mapper: (t: number) => M): Sub<M> {
-  return new RafSub(mapper);
+export function onAnimationFrame<M>(mapper: (t: number) => M, flushSync: boolean = true): Sub<M> {
+  return new RafSub(mapper, flushSync);
 }
