@@ -26,8 +26,12 @@
 import { Dispatcher } from './Dispatcher';
 
 export abstract class Sub<Msg> {
-  protected dispatcher: Dispatcher<Msg> | undefined;
+  private dispatcher: Dispatcher<Msg> | undefined;
   private active: boolean = false;
+
+  private throwingDispatcher = () => {
+    throw new Error('Calling dispatch() in sub init/release is forbidden');
+  };
 
   static none<Msg>(): Sub<Msg> {
     return new SubNone();
@@ -38,13 +42,15 @@ export abstract class Sub<Msg> {
   }
 
   init(dispatch: Dispatcher<Msg>): void {
-    this.dispatcher = dispatch;
     this.active = true;
+    this.dispatcher = this.throwingDispatcher;
     this.onInit();
+    this.dispatcher = dispatch;
   }
 
   release(): void {
     this.active = false;
+    this.dispatcher = this.throwingDispatcher;
     this.onRelease();
   }
 
