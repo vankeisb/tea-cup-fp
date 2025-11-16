@@ -45,6 +45,7 @@ function cleanupIntervalForDelay(delay: number) {
   const handle = everyIntervals[delay];
   if (handle) {
     clearInterval(handle);
+    everyIntervals[delay] = undefined;
   }
 }
 
