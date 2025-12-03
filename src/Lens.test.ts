@@ -24,7 +24,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import { discriminate, idLens, SubTypeGuard } from './Lens';
+import { discriminate, idLens, orElse, SubTypeGuard } from './Lens';
 import { just, Maybe, nothing } from './Maybe';
 
 describe('lens', () => {
@@ -367,6 +367,29 @@ describe('lens', () => {
     expect(flattened.update(morePage2, (u) => u + '!')).toEqual(just({ tag: 'more', more: just('gnu!') }));
     expect(flattened.update(homePage, (u) => u + '!')).toEqual(nothing);
   });
+
+  test('or else', () => {
+    const lPersonAnimal = idLens<Person>().field('animal');
+    const lCatInfo = idLens<Animal>().sub<Cat>(discriminate('tag', 'cat')).field('info');
+    const lDogInfo = idLens<Animal>().sub<Dog>(discriminate('tag', 'dog')).field('info');
+    const lAnimalInfo = orElse(lCatInfo, lDogInfo);
+    const lPersonAnimalAge = lPersonAnimal.andThenPrism(lAnimalInfo).field('age');
+
+    const cat1: Animal = { tag: 'cat', color: 'white', info: { name: 'Lemmy', age: 2 } };
+    const dog1: Animal = { tag: 'dog', breed: 'st bernard', info: { name: 'Beethoven', age: 6 } };
+    const person1: Person = { name: 'mr', animal: cat1 };
+    const person2: Person = { name: 'mrs', animal: dog1 };
+
+    expect(lPersonAnimalAge.get(person1)).toEqual(just(2));
+    expect(lPersonAnimalAge.get(person2)).toEqual(just(6));
+
+    expect(lPersonAnimalAge.update(person1, (age) => age + 1)).toEqual(
+      just({ name: 'mr', animal: { tag: 'cat', color: 'white', info: { name: 'Lemmy', age: 3 } } }),
+    );
+    expect(lPersonAnimalAge.update(person2, (age) => age + 2)).toEqual(
+      just({ name: 'mrs', animal: { tag: 'dog', breed: 'st bernard', info: { name: 'Beethoven', age: 8 } } }),
+    );
+  });
 });
 
 interface AppWithPage {
@@ -403,3 +426,9 @@ type MusicPlayer = { tag: 'home' } | Player;
 type Player = { tag: 'player'; tab: Tab };
 type Tab = { tag: 'albums' } | Artists;
 type Artists = { tag: 'artists'; count: number };
+
+type Animal = Dog | Cat;
+type Dog = { tag: 'dog'; breed: string; info: Info };
+type Cat = { tag: 'cat'; color: string; info: Info };
+type Info = { name: string; age: number };
+type Person = { name: string; animal: Animal };
